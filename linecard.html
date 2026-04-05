@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Line Card">
+<title>Line Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--navy:#0a2a4f;--blue:#2693ff;--light-blue:#e4eef8;--stroke:rgba(0,0,0,.1);--green:#1a7f3c}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f0f4f8;color:var(--navy);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+.wrap{padding:20px 16px 40px;max-width:540px;margin:0 auto}
+.brand-bar{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.brand-name{font-size:2rem;font-weight:700;letter-spacing:-0.05em;color:var(--navy)}
+.brand-pill{font-size:0.625rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--light-blue);color:var(--blue);padding:4px 10px;border-radius:100px}
+.sub{font-size:0.9375rem;color:rgba(10,42,79,.5);margin-bottom:24px;line-height:1.5}
+.data-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;color:rgba(10,42,79,.4);background:#fff;border-radius:100px;padding:4px 10px;margin-bottom:20px;border:1px solid var(--stroke)}
+.data-dot{width:7px;height:7px;border-radius:50%;background:#34c759;flex-shrink:0}
+.data-dot.stale{background:#ff9500}
+.sec-lbl{font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(10,42,79,.4);margin:0 4px 8px}
+.card{background:#fff;border-radius:20px;overflow:hidden;margin-bottom:16px}
+.field{display:flex;align-items:center;padding:0 20px;min-height:62px;border-bottom:1px solid var(--stroke)}
+.field:last-child{border-bottom:none}
+.field-label{font-size:1.0625rem;font-weight:500;color:var(--navy);flex:1}
+.sel-wrap{display:flex;align-items:center;gap:4px}
+select{font-family:'Inter',-apple-system,sans-serif;font-size:1.0625rem;color:var(--blue);font-weight:600;background:transparent;border:none;outline:none;text-align:right;-webkit-appearance:none;appearance:none;padding:0;cursor:pointer;max-width:180px}
+.chev{font-size:13px;color:rgba(10,42,79,.25)}
+.toggle-row{display:flex;align-items:center;padding:16px 20px;min-height:68px;border-bottom:1px solid var(--stroke);gap:14px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.toggle-row:last-child{border-bottom:none}
+.toggle-row:active{background:#f7faff}
+.toggle-info{flex:1;pointer-events:none}
+.toggle-name{font-size:1.0625rem;font-weight:600;color:var(--navy)}
+.toggle-kw{font-size:0.8125rem;color:rgba(10,42,79,.35);margin-top:3px;line-height:1.4}
+.pill{width:56px;height:34px;border-radius:100px;background:#ddd;position:relative;flex-shrink:0;transition:background .22s;pointer-events:none}
+.pill.on{background:#34c759}
+.pill-thumb{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.28);transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.pill.on .pill-thumb{transform:translateX(22px)}
+.rate-row{display:flex;align-items:center;padding:0 20px;min-height:62px;border-bottom:1px solid var(--stroke);gap:12px}
+.rate-row:last-child{border-bottom:none}
+.rate-name{flex:1;font-size:1.0625rem;font-weight:500;color:var(--navy)}
+.rate-right{display:flex;align-items:center;gap:6px}
+.rate-pct{font-size:1.0625rem;color:rgba(10,42,79,.35);font-weight:500}
+.run-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:20px;background:var(--navy);color:#fff;border:none;border-radius:20px;font-family:'Inter',-apple-system,sans-serif;font-size:1.125rem;font-weight:700;letter-spacing:-0.01em;cursor:pointer;margin-bottom:20px;-webkit-appearance:none;transition:opacity .15s}
+.run-btn:active{opacity:.75}
+.results-card{background:#fff;border-radius:20px;overflow:hidden;margin-bottom:16px}
+.res-header{padding:18px 20px;border-bottom:1px solid var(--stroke);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.res-title{font-size:1.0625rem;font-weight:700;color:var(--navy);letter-spacing:-0.02em}
+.res-meta{font-size:0.6875rem;color:rgba(10,42,79,.35);font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--stroke)}
+.stat{background:var(--light-blue);padding:16px 14px}
+.stat+.stat{border-left:1px solid rgba(10,42,79,.08)}
+.stat-lbl{font-size:0.625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(10,42,79,.4);margin-bottom:5px}
+.stat-val{font-size:1.375rem;font-weight:700;letter-spacing:-0.04em;color:var(--navy)}
+.stat-val.green{color:var(--green)}
+.cand-row{border-bottom:1px solid var(--stroke)}
+.cand-row:last-child{border-bottom:none}
+.cand-summary{padding:16px 20px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.cand-summary:active{background:#fafcff}
+.cand-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:7px}
+.cand-name{font-size:1.0625rem;font-weight:700;color:var(--blue);letter-spacing:-0.02em;line-height:1.25;flex:1}
+.cand-cashback{font-size:1.0625rem;font-weight:700;color:var(--green);white-space:nowrap;letter-spacing:-0.02em}
+.cand-cashback.zero{color:rgba(10,42,79,.2);font-weight:500}
+.cand-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cand-office{font-size:0.8125rem;color:rgba(10,42,79,.4);font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.cand-chevron{font-size:12px;color:rgba(10,42,79,.25);margin-left:auto;transition:transform .2s;flex-shrink:0}
+.cand-row.open .cand-chevron{transform:rotate(90deg)}
+.badge{display:inline-block;padding:3px 9px;border-radius:100px;font-size:0.6875rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.badge-tv,.badge-cable{background:#dbeafe;color:#1e40af}
+.badge-ctv{background:#dcfce7;color:#15803d}
+.badge-digital{background:#ede9fe;color:#6d28d9}
+.badge-radio{background:#fef3c7;color:#b45309}
+.badge-mail{background:#fce7f3;color:#9d174d}
+.party-tag{font-size:0.6875rem;color:rgba(10,42,79,.3);font-weight:700;letter-spacing:0.05em;text-transform:uppercase}
+.cand-spend{font-size:0.8125rem;color:rgba(10,42,79,.35);font-weight:500}
+.vendor-list{display:none;background:#f7fafd;border-top:1px solid var(--stroke);padding:4px 0}
+.cand-row.open .vendor-list{display:block}
+.vendor-row{display:flex;align-items:flex-start;gap:10px;padding:12px 20px;border-bottom:1px solid rgba(10,42,79,.06)}
+.vendor-row:last-child{border-bottom:none}
+.vendor-left{flex:1;min-width:0}
+.vendor-name{font-size:0.9375rem;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vendor-desc{font-size:0.75rem;color:rgba(10,42,79,.4);margin-top:2px;line-height:1.4}
+.vendor-right{text-align:right;flex-shrink:0}
+.vendor-amt{font-size:0.9375rem;font-weight:700;color:var(--navy);letter-spacing:-0.02em}
+.vendor-date{font-size:0.6875rem;color:rgba(10,42,79,.35);margin-top:2px}
+.vendor-type{display:inline-block;margin-top:4px;padding:2px 7px;border-radius:100px;font-size:0.625rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.footer-note{font-size:0.75rem;color:rgba(10,42,79,.3);padding:12px 20px;line-height:1.5}
+.dropped-note{font-size:0.8125rem;color:rgba(10,42,79,.4);padding:12px 20px;border-top:1px solid var(--stroke)}
+.error-card{background:#fff5f5;border-radius:20px;padding:20px;color:#b91c1c;font-size:1rem;margin-bottom:16px;font-weight:500}
+.no-data-card{background:#fff;border-radius:20px;padding:24px 20px;margin-bottom:16px;text-align:center}
+.no-data-title{font-size:1rem;font-weight:600;color:var(--navy);margin-bottom:8px}
+.no-data-sub{font-size:0.875rem;color:rgba(10,42,79,.5);line-height:1.5}
+.no-data-code{font-family:monospace;font-size:0.8125rem;background:#f0f4f8;border-radius:8px;padding:10px 14px;margin-top:12px;text-align:left;color:var(--navy);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand-bar">
+    <span class="brand-name">Line Card</span>
+    <span class="brand-pill">FEC lookup</span>
+  </div>
+  <p class="sub">Democratic candidate media spend from FEC bulk data.</p>
+  <div class="data-badge" id="data-badge">
+    <span class="data-dot" id="data-dot"></span>
+    <span id="data-badge-text">Checking data...</span>
+  </div>
+
+  <div class="sec-lbl">Search</div>
+  <div class="card">
+    <div class="field">
+      <span class="field-label">State</span>
+      <div class="sel-wrap">
+        <select id="state">
+          <option value="">Select...</option>
+          <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option>
+          <option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option>
+          <option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option>
+          <option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+          <option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option>
+          <option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+          <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option>
+          <option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+          <option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option>
+          <option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+        </select>
+        <span class="chev">&#8250;</span>
+      </div>
+    </div>
+    <div class="field">
+      <span class="field-label">Office</span>
+      <div class="sel-wrap">
+        <select id="office">
+          <option value="">All</option>
+          <option value="S">Senate</option>
+          <option value="H">House</option>
+        </select>
+        <span class="chev">&#8250;</span>
+      </div>
+    </div>
+    <div class="field">
+      <span class="field-label">Min media spend</span>
+      <div class="sel-wrap">
+        <select id="floor">
+          <option value="0">None</option>
+          <option value="5000">$5K</option>
+          <option value="25000" selected>$25K</option>
+          <option value="100000">$100K</option>
+          <option value="500000">$500K</option>
+          <option value="1000000">$1M</option>
+        </select>
+        <span class="chev">&#8250;</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Media types</div>
+  <div class="card" id="toggle-card"></div>
+
+  <div id="rate-wrap" style="display:none">
+    <div class="sec-lbl">Line Card cashback %</div>
+    <div class="card" id="rate-card"></div>
+  </div>
+
+  <button class="run-btn" id="run-btn">
+    <span id="btn-label">Run lookup</span>
+  </button>
+
+  <div id="results"></div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+// Replace the value below with the contents of linecard_data.json
+// after running build_linecard_data.py
+var FEC_DATA = null; // REPLACE_WITH_JSON_DATA
+
+// Replace with the output of linecard_data_meta.json
+var FEC_META = null; // REPLACE_WITH_META_DATA
+
+// ── MEDIA TYPES ───────────────────────────────────────────────────────────────
+var MEDIA = [
+  {id:'tv',      name:'Broadcast TV',    badge:'badge-tv',      kw:['television','broadcast','tv buy','media buy','tv ad','local tv','network tv']},
+  {id:'ctv',     name:'CTV / Streaming', badge:'badge-ctv',     kw:['ctv','connected tv','streaming','hulu','youtube tv','ott','video streaming']},
+  {id:'digital', name:'Digital / Social',badge:'badge-digital', kw:['digital','facebook','instagram','meta','google ads','programmatic','tiktok']},
+  {id:'radio',   name:'Radio',           badge:'badge-radio',   kw:['radio','iheartmedia','audacy','spotify','pandora','audio']},
+  {id:'mail',    name:'Direct Mail',     badge:'badge-mail',    kw:['direct mail','mail','printing','postage','mailer']},
+  {id:'cable',   name:'Cable TV',        badge:'badge-cable',   kw:['cable','cnn','msnbc','fox news','cable tv']},
+];
+
+var active = {tv:false, ctv:true, digital:true, radio:false, mail:false, cable:false};
+var rates  = {tv:0, ctv:1.0, digital:1.0, radio:0, mail:0, cable:0};
+
+// ── DATA BADGE ────────────────────────────────────────────────────────────────
+function initDataBadge() {
+  var dot  = document.getElementById('data-dot');
+  var text = document.getElementById('data-badge-text');
+  if (!FEC_DATA) {
+    dot.className = 'data-dot stale';
+    text.textContent = 'No data loaded — run build_linecard_data.py';
+    return;
+  }
+  var count = Object.keys(FEC_DATA).length;
+  if (FEC_META && FEC_META.generated) {
+    var d = new Date(FEC_META.generated);
+    var days = Math.floor((Date.now() - d.getTime()) / 86400000);
+    var age = days === 0 ? 'today' : days === 1 ? 'yesterday' : days + 'd ago';
+    dot.className = days > 45 ? 'data-dot stale' : 'data-dot';
+    text.textContent = count.toLocaleString() + ' candidates \u00B7 updated ' + age;
+  } else {
+    text.textContent = count.toLocaleString() + ' candidates loaded';
+  }
+}
+
+// ── TOGGLES ───────────────────────────────────────────────────────────────────
+function buildToggles() {
+  var el = document.getElementById('toggle-card');
+  el.innerHTML = '';
+  for (var i = 0; i < MEDIA.length; i++) {
+    var m = MEDIA[i];
+    var row = document.createElement('div');
+    row.className = 'toggle-row';
+    row.setAttribute('data-id', m.id);
+    row.innerHTML =
+      '<div class="toggle-info">' +
+        '<div class="toggle-name">' + m.name + '</div>' +
+        '<div class="toggle-kw">' + m.kw.slice(0,3).join(', ') + '</div>' +
+      '</div>' +
+      '<div class="pill' + (active[m.id] ? ' on' : '') + '" id="pill-' + m.id + '">' +
+        '<div class="pill-thumb"></div>' +
+      '</div>';
+    el.appendChild(row);
+  }
+  el.addEventListener('click', function(e) {
+    var row = e.target.closest('.toggle-row');
+    if (!row) return;
+    var id = row.getAttribute('data-id');
+    active[id] = !active[id];
+    document.getElementById('pill-' + id).className = 'pill' + (active[id] ? ' on' : '');
+    buildRates();
+  });
+}
+
+function buildRates() {
+  var wrap = document.getElementById('rate-wrap');
+  var card = document.getElementById('rate-card');
+  var anyActive = MEDIA.some(function(m) { return active[m.id]; });
+  if (!anyActive) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  card.innerHTML = '';
+  for (var i = 0; i < MEDIA.length; i++) {
+    var m = MEDIA[i];
+    if (!active[m.id]) continue;
+    var row = document.createElement('div');
+    row.className = 'rate-row';
+    var inp = document.createElement('input');
+    inp.type = 'number';
+    inp.setAttribute('inputmode', 'decimal');
+    inp.min = 0; inp.max = 20; inp.step = 0.1;
+    inp.value = rates[m.id];
+    inp.setAttribute('data-id', m.id);
+    inp.style.cssText = 'font-family:Inter,-apple-system,sans-serif;font-size:1.1875rem;color:#2693ff;font-weight:700;background:transparent;border:none;outline:none;text-align:right;width:56px;-webkit-appearance:none;appearance:none';
+    inp.addEventListener('change', function() {
+      rates[this.getAttribute('data-id')] = parseFloat(this.value) || 0;
+    });
+    row.innerHTML = '<div class="rate-name">' + m.name + '</div><div class="rate-right"></div>';
+    row.querySelector('.rate-right').appendChild(inp);
+    var pct = document.createElement('span');
+    pct.className = 'rate-pct';
+    pct.textContent = '%';
+    row.querySelector('.rate-right').appendChild(pct);
+    card.appendChild(row);
+  }
+}
+
+buildToggles();
+buildRates();
+initDataBadge();
+
+// ── RUN LOOKUP — now instant, no API ─────────────────────────────────────────
+document.getElementById('run-btn').addEventListener('click', function() {
+  var state  = document.getElementById('state').value;
+  var office = document.getElementById('office').value;
+  var floor  = parseFloat(document.getElementById('floor').value) || 0;
+
+  if (!state) { alert('Please select a state.'); return; }
+
+  var anyActive = MEDIA.some(function(m) { return active[m.id]; });
+  if (!anyActive) { alert('Please select at least one media type.'); return; }
+
+  if (!FEC_DATA) {
+    document.getElementById('results').innerHTML =
+      '<div class="no-data-card">' +
+        '<div class="no-data-title">No data loaded</div>' +
+        '<div class="no-data-sub">Run the processing script to generate linecard_data.json, then paste it into this file.</div>' +
+        '<div class="no-data-code">python3 build_linecard_data.py</div>' +
+      '</div>';
+    return;
+  }
+
+  // Filter candidates from local data — instant
+  var rows = [];
+  for (var candId in FEC_DATA) {
+    var c = FEC_DATA[candId];
+    if (c.state !== state) continue;
+    if (office && c.office !== office) continue;
+
+    // Filter disbursements to active media types only
+    var disbs = (c.disbs || []).filter(function(d) { return active[d.m]; });
+    var totalMedia = disbs.reduce(function(s, d) { return s + d.a; }, 0);
+
+    if (totalMedia < floor) continue;
+
+    var cashBack = disbs.reduce(function(s, d) {
+      return s + d.a * ((rates[d.m] || 0) / 100);
+    }, 0);
+
+    // Primary channel
+    var byType = {};
+    disbs.forEach(function(d) { byType[d.m] = (byType[d.m] || 0) + d.a; });
+    var pType = Object.keys(byType).sort(function(a,b) { return byType[b]-byType[a]; })[0] || null;
+
+    rows.push({
+      name: c.name,
+      candId: candId,
+      office: c.office,
+      district: c.district || '',
+      party: c.party,
+      totalMedia: totalMedia,
+      cashBack: cashBack,
+      pType: pType,
+      disbs: disbs,
+    });
+  }
+
+  rows.sort(function(a,b) { return b.totalMedia - a.totalMedia; });
+
+  var tMedia = rows.reduce(function(s,r) { return s+r.totalMedia; }, 0);
+  var tCash  = rows.reduce(function(s,r) { return s+r.cashBack; }, 0);
+  var wMedia = rows.filter(function(r) { return r.totalMedia > 0; }).length;
+
+  var resultsEl = document.getElementById('results');
+  if (rows.length === 0) {
+    resultsEl.innerHTML = '<div class="error-card">No candidates found for ' + state + ' with matched media spend. Try a lower floor or enabling more media types.</div>';
+    return;
+  }
+
+  var wrap = document.createElement('div');
+  wrap.className = 'results-card';
+  wrap.innerHTML =
+    '<div class="res-header">'
+      + '<span class="res-title">' + state + ' &middot; ' + rows.length + ' candidate' + (rows.length!==1?'s':'') + '</span>'
+      + '<span class="res-meta">FEC &middot; 2025&ndash;26</span>'
+    + '</div>'
+    + '<div class="stat-row">'
+      + '<div class="stat"><div class="stat-lbl">w/ media</div><div class="stat-val">' + wMedia + '</div></div>'
+      + '<div class="stat"><div class="stat-lbl">Media spend</div><div class="stat-val">' + fmtS(tMedia) + '</div></div>'
+      + '<div class="stat"><div class="stat-lbl">Cashback</div><div class="stat-val green">' + fmtS(tCash) + '</div></div>'
+    + '</div>';
+
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var mObj = MEDIA.find(function(m) { return m.id === r.pType; }) || null;
+    var ptag = (r.party==='DFL'||r.party==='IND') ? '<span class="party-tag">'+r.party+'</span>' : '';
+
+    var candRow = document.createElement('div');
+    candRow.className = 'cand-row';
+
+    var summary = document.createElement('div');
+    summary.className = 'cand-summary';
+    summary.innerHTML =
+      '<div class="cand-top">'
+        + '<span class="cand-name">' + r.name + '</span>'
+        + '<span class="cand-cashback' + (r.cashBack>0?'':' zero') + '">' + (r.cashBack>0?fmtN(r.cashBack):'&mdash;') + '</span>'
+      + '</div>'
+      + '<div class="cand-meta">'
+        + '<span class="cand-office">' + r.office + (r.district?' '+r.district:'') + '</span>'
+        + (mObj ? '<span class="badge '+mObj.badge+'">'+mObj.name+'</span>' : '')
+        + ptag
+        + (r.totalMedia>0 ? '<span class="cand-spend">'+fmtN(r.totalMedia)+' media</span>' : '')
+        + '<span class="cand-chevron">&#8250;</span>'
+      + '</div>';
+
+    var vendorList = document.createElement('div');
+    vendorList.className = 'vendor-list';
+    vendorList.innerHTML = buildVendorList(r.disbs);
+
+    summary.addEventListener('click', (function(row) {
+      return function() { row.classList.toggle('open'); };
+    })(candRow));
+
+    candRow.appendChild(summary);
+    candRow.appendChild(vendorList);
+    wrap.appendChild(candRow);
+  }
+
+  var fn = document.createElement('div');
+  fn.className = 'footer-note';
+  fn.innerHTML = 'FEC bulk data &middot; Itemized disbursements &#8805;$200 &middot; ' + (FEC_META ? FEC_META.generated.slice(0,10) : 'Unknown date');
+  wrap.appendChild(fn);
+
+  resultsEl.innerHTML = '';
+  resultsEl.appendChild(wrap);
+});
+
+// ── VENDOR BREAKDOWN ──────────────────────────────────────────────────────────
+function buildVendorList(disbs) {
+  if (!disbs || disbs.length === 0) {
+    return '<div style="padding:14px 20px;font-size:0.875rem;color:rgba(10,42,79,.4)">No matched disbursements.</div>';
+  }
+  var agg = {};
+  disbs.forEach(function(d) {
+    var key = d.v + '|' + d.m;
+    if (!agg[key]) agg[key] = {vendor:d.v, type:d.m, amt:0, dates:[], descs:{}};
+    agg[key].amt += d.a;
+    if (d.t) agg[key].dates.push(d.t);
+    if (d.d) agg[key].descs[d.d] = true;
+  });
+  var entries = Object.values(agg).sort(function(a,b) { return b.amt-a.amt; });
+  return entries.map(function(e) {
+    var mObj = MEDIA.find(function(m) { return m.id === e.type; }) || null;
+    var descKeys = Object.keys(e.descs);
+    var descStr = capWords(descKeys[0] || '') + (descKeys.length > 1 ? ' +' + (descKeys.length-1) + ' more' : '');
+    var latestDate = e.dates.slice().sort().reverse()[0] || '';
+    return '<div class="vendor-row">'
+      + '<div class="vendor-left">'
+        + '<div class="vendor-name">' + capWords(e.vendor) + '</div>'
+        + (descStr ? '<div class="vendor-desc">' + descStr + '</div>' : '')
+        + (mObj ? '<span class="vendor-type badge '+mObj.badge+'">'+mObj.name+'</span>' : '')
+      + '</div>'
+      + '<div class="vendor-right">'
+        + '<div class="vendor-amt">' + fmtN(e.amt) + '</div>'
+        + (latestDate ? '<div class="vendor-date">' + fmtDate(latestDate) + '</div>' : '')
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function fmtN(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmtS(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + Math.round(n/1000) + 'K';
+  return '$' + Math.round(n);
+}
+function fmtDate(s) {
+  if (!s) return '';
+  var p = s.split('-');
+  return p.length === 3 ? p[1]+'/'+p[2].slice(0,2)+'/'+p[0].slice(2) : s;
+}
+function capWords(s) {
+  return (s||'').toLowerCase().replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+}
+</script>
+</body>
+</html>
