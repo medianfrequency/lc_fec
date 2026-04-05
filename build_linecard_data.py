@@ -65,7 +65,9 @@ SB_CMTE_ID   = 0
 SB_NAME      = 8   # Recipient/vendor name
 SB_DATE      = 12  # Transaction date
 SB_AMT       = 13  # Amount
-SB_PURPOSE   = 14  # Purpose of disbursement (primary description field)
+SB_PURPOSE   = 14  # Purpose of disbursement
+SB_CATEGORY  = 15  # Category code
+SB_DESC      = 16  # Disbursement description (CATEGORY_DESC)
 SB_MEMO      = 18  # Memo text (supplemental)
 
 # ── Media keyword classifier ─────────────────────────────────────────────────
@@ -160,6 +162,9 @@ for row in parse_pipe(cn_raw):
         continue
     if status not in ("C", "P", ""):  # C=current, P=prior (keep both)
         continue
+    # No election-year filter here — cn26.zip is already scoped to the 2025-2026
+    # cycle. Candidates only appear in final output if their committee has actual
+    # disbursements in the 2026 Schedule B file, which is the real activity gate.
 
     dem_candidates[cand_id] = {
         "name":     fmt_name(row[CN_NAME].strip()),
@@ -211,14 +216,14 @@ for row in parse_pipe(sb_raw):
 
     cand_id = comm_to_cand[cmte_id]
 
-    # Purpose field is the primary description; memo is supplemental
+    # Purpose field is the primary description; category_desc is the disbursement description
     purpose = row[SB_PURPOSE].strip() if len(row) > SB_PURPOSE else ""
+    desc    = row[SB_DESC].strip()    if len(row) > SB_DESC    else ""
     memo    = row[SB_MEMO].strip()    if len(row) > SB_MEMO    else ""
     vendor  = row[SB_NAME].strip()
 
-    # Classify on purpose first, then memo, then vendor name
-    desc = purpose or memo
-    media_type = classify(purpose) or classify(memo) or classify(vendor)
+    # Classify on disbursement description first, then purpose, then memo, then vendor
+    media_type = classify(desc) or classify(purpose) or classify(memo) or classify(vendor)
     if not media_type:
         continue
 
@@ -241,11 +246,13 @@ for row in parse_pipe(sb_raw):
         disbursements[cand_id] = []
 
     disbursements[cand_id].append({
-        "v": vendor.title()[:60],       # vendor name (truncated)
-        "d": desc[:80],                  # description (truncated)
-        "a": round(amt, 2),             # amount
-        "t": date,                      # date
-        "m": media_type,                # media type
+        "v": vendor.title()[:60],  # recipient name
+        "desc": desc[:80],         # disbursement description (CATEGORY_DESC, index 16)
+        "p": purpose[:80],         # purpose field (index 14)
+        "memo": memo[:80],         # memo text (index 18)
+        "a": round(amt, 2),        # amount
+        "t": date,                 # date
+        "m": media_type,           # media type
     })
     matched_rows += 1
 
@@ -272,6 +279,7 @@ for cand_id, cand in dem_candidates.items():
         "state":    cand["state"],
         "office":   cand["office"],
         "district": cand["district"],
+        "pcc":      cand["pcc"],
         "total":    round(total_media, 2),
         "disbs":    disbs,
     }
