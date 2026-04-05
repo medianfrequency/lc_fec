@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Line Card">
+<title>Line Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--navy:#0a2a4f;--blue:#2693ff;--light-blue:#e4eef8;--stroke:rgba(0,0,0,.1);--green:#1a7f3c}
+body{font-family:'Inter',-apple-system,sans-serif;background:#f0f4f8;color:var(--navy);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.wrap{padding:40px 16px;max-width:540px;width:100%;margin:0 auto}
+.brand-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.brand-name{font-size:2rem;font-weight:700;letter-spacing:-0.05em;color:var(--navy)}
+.sub{font-size:0.9375rem;color:rgba(10,42,79,.5);margin-bottom:40px;line-height:1.5}
+.tools{display:flex;flex-direction:column;gap:12px}
+.tool-card{display:block;background:#fff;border-radius:20px;padding:24px 24px 20px;text-decoration:none;border:1.5px solid transparent;transition:border-color .18s, box-shadow .18s;-webkit-user-select:none;user-select:none}
+.tool-card:active{opacity:.85}
+.tool-card:hover{border-color:var(--blue);box-shadow:0 4px 20px rgba(38,147,255,.12)}
+.tool-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tool-title{font-size:1.25rem;font-weight:700;letter-spacing:-0.03em;color:var(--navy)}
+.tool-pill{font-size:0.625rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px}
+.pill-fec{background:var(--light-blue);color:var(--blue)}
+.pill-ie{background:#dcfce7;color:#15803d}
+.tool-desc{font-size:0.9375rem;color:rgba(10,42,79,.5);line-height:1.5;margin-bottom:16px}
+.tool-footer{display:flex;align-items:center;justify-content:space-between}
+.tool-meta{font-size:0.75rem;color:rgba(10,42,79,.3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.tool-arrow{font-size:1.25rem;color:var(--blue);font-weight:700}
+.divider{height:1px;background:var(--stroke);margin:32px 0}
+.footer{font-size:0.75rem;color:rgba(10,42,79,.25);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand-bar">
+    <span class="brand-name">Line Card</span>
+  </div>
+  <p class="sub">Democratic media spend intelligence. Choose a data source to begin.</p>
+
+  <div class="tools">
+    <a class="tool-card" href="linecard.html">
+      <div class="tool-header">
+        <span class="tool-title">Campaign Spend</span>
+        <span class="tool-pill pill-fec">FEC Lookup</span>
+      </div>
+      <p class="tool-desc">Candidate and party committee media disbursements from FEC operating expenditure reports. Updated quarterly.</p>
+      <div class="tool-footer">
+        <span class="tool-meta">Campaigns &middot; State Parties &middot; Federal Committees</span>
+        <span class="tool-arrow">&#8250;</span>
+      </div>
+    </a>
+
+    <a class="tool-card" href="ie_linecard.html">
+      <div class="tool-header">
+        <span class="tool-title">Independent Expenditures</span>
+        <span class="tool-pill pill-ie">IE Tracker</span>
+      </div>
+      <p class="tool-desc">Outside group media spend supporting Democrats and opposing Republicans from FEC 24/48-hour IE reports. Updated daily.</p>
+      <div class="tool-footer">
+        <span class="tool-meta">Super PACs &middot; 527s &middot; Outside Groups</span>
+        <span class="tool-arrow">&#8250;</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+  <p class="footer">Line Card &middot; FEC bulk data</p>
+</div>
+</body>
+</html>
