@@ -5,16 +5,18 @@ Injects linecard_data.json and linecard_data_meta.json into linecard.html in pla
 
 Usage:
     python3 inject_fec_data.py
-    python3 inject_fec_data.py --html path/to/linecard.html \
-                                --data path/to/linecard_data.json \
-                                --meta path/to/linecard_data_meta.json
+    python3 inject_fec_data.py --html linecard.html --data linecard_data.json --meta linecard_data_meta.json
 """
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
+
+
+# Placeholder strings as they appear in the HTML template
+DATA_PLACEHOLDER = '// REPLACE_WITH_JSON_DATA'
+META_PLACEHOLDER = '// REPLACE_WITH_META_DATA'
 
 
 def inject(html_path: Path, data_path: Path, meta_path: Path) -> None:
@@ -26,40 +28,52 @@ def inject(html_path: Path, data_path: Path, meta_path: Path) -> None:
     data_json = json.dumps(data, separators=(",", ":"))
     meta_json = json.dumps(meta, separators=(",", ":"))
 
-    # Replace FEC_DATA — handles placeholder comment, already-injected object, or null
-    html, n1 = re.subn(
-        r'var FEC_DATA\s*=\s*(?://\s*REPLACE_WITH_JSON_DATA|\{.*?\}|null)',
-        f'var FEC_DATA = {data_json}',
-        html,
-        flags=re.DOTALL,
-    )
-    if n1 == 0:
-        print("ERROR: Could not find FEC_DATA placeholder in HTML.", file=sys.stderr)
-        sys.exit(1)
+    # ── Inject FEC_DATA ───────────────────────────────────────────────────────
+    if DATA_PLACEHOLDER in html:
+        # First run — replace placeholder comment
+        html = html.replace(DATA_PLACEHOLDER, data_json)
+    else:
+        # Re-run — find the line with var FEC_DATA and replace the value
+        lines = html.splitlines(keepends=True)
+        replaced = False
+        for i, line in enumerate(lines):
+            if line.strip().startswith('var FEC_DATA'):
+                lines[i] = f'var FEC_DATA = {data_json}\n'
+                replaced = True
+                break
+        if not replaced:
+            print("ERROR: Could not find FEC_DATA in HTML.", file=sys.stderr)
+            sys.exit(1)
+        html = ''.join(lines)
 
-    # Replace FEC_META — handles placeholder comment, already-injected object, or null
-    html, n2 = re.subn(
-        r'var FEC_META\s*=\s*(?://\s*REPLACE_WITH_META_DATA|\{.*?\}|null)',
-        f'var FEC_META = {meta_json}',
-        html,
-        flags=re.DOTALL,
-    )
-    if n2 == 0:
-        print("ERROR: Could not find FEC_META placeholder in HTML.", file=sys.stderr)
-        sys.exit(1)
+    # ── Inject FEC_META ───────────────────────────────────────────────────────
+    if META_PLACEHOLDER in html:
+        html = html.replace(META_PLACEHOLDER, meta_json)
+    else:
+        lines = html.splitlines(keepends=True)
+        replaced = False
+        for i, line in enumerate(lines):
+            if line.strip().startswith('var FEC_META'):
+                lines[i] = f'var FEC_META = {meta_json}\n'
+                replaced = True
+                break
+        if not replaced:
+            print("ERROR: Could not find FEC_META in HTML.", file=sys.stderr)
+            sys.exit(1)
+        html = ''.join(lines)
 
     html_path.write_text(html, encoding="utf-8")
 
     cands = len(data)
-    generated = meta.get("generated", "unknown")
+    generated = meta.get("generated", "unknown")[:19]
     print(f"✓ Injected {cands:,} candidates (generated: {generated}) → {html_path}")
 
 
 def main():
     parser = argparse.ArgumentParser(description="Inject FEC data into linecard.html")
-    parser.add_argument("--html", default="linecard.html",  help="Path to linecard.html")
-    parser.add_argument("--data", default="linecard_data.json", help="Path to linecard_data.json")
-    parser.add_argument("--meta", default="linecard_data_meta.json", help="Path to linecard_data_meta.json")
+    parser.add_argument("--html", default="linecard.html")
+    parser.add_argument("--data", default="linecard_data.json")
+    parser.add_argument("--meta", default="linecard_data_meta.json")
     args = parser.parse_args()
 
     html_path = Path(args.html)
